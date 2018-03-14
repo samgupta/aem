@@ -1,0 +1,21 @@
+{
+  "actions": [{
+      "description": "Esure bot",
+      "name": "MAIN",
+      "fulfillment": {
+          "conversationName": "MAIN_CONVERSATION"
+      },
+      "intent": {
+          "name": "actions.intent.MAIN",
+          "trigger": {
+              "queryPatterns": ["talk to Esure"]
+          }
+      }
+  }],
+  "conversations": {
+      "MAIN_CONVERSATION": {
+          "name": "MAIN_CONVERSATION",
+          "url": "https://esure-chatbot.appliedinnovationexchange.com:1234/"
+      }
+  }
+}

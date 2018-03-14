@@ -1,0 +1,12 @@
+version: '3'
+services:
+  dynamodb:
+    image: deangiberson/aws-dynamodb-local
+    container_name: dynamodb-developer
+    ports:
+      - "8000:8000"
+    volumes:
+      - dynamodb:/var/dynamodb_local
+
+volumes:
+  dynamodb:

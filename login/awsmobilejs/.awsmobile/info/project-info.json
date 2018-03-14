@@ -1,0 +1,22 @@
+{
+	"ProjectName": "login",
+	"ProjectPath": "/Users/philhardwick/Development/Repos/AIE/esure-chatbot/login",
+	"SourceDir": "src",
+	"DistributionDir": "build",
+	"BuildCommand": "npm run-script build",
+	"StartCommand": "npm run-script start",
+	"InitializationTime": "2018-01-24-18-04-18",
+	"LastConfigurationTime": "2018-01-24-18-04-22",
+	"LastNPMInstallTime": "2018-01-26-14-32-27",
+	"FrontendLastBuildTime": "2018-01-26-14-32-42",
+	"LastPublishTime": "2018-01-26-14-32-44",
+	"BackendFormat": "yml",
+	"BackendLastBuildTime": "2018-01-26-14-31-44",
+	"BackendLastUpdateTime": "2018-01-26-14-31-48",
+	"BackendLastUpdateSuccessful": true,
+	"BackendProjectID": "f1352dcd-ef3a-4c24-8a34-78aed32d1adf",
+	"BackendProjectName": "esure-login",
+	"BackendProjectConsoleUrl": "https://console.aws.amazon.com/mobilehub/home#/f1352dcd-ef3a-4c24-8a34-78aed32d1adf/build",
+	"BackendProjectCreationTime": "2018-01-24T18:03:18.461Z",
+	"BackendProjectLastUpdatedTime": "2018-01-26T14:31:45.969Z"
+}

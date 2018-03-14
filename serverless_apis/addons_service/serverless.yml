@@ -1,0 +1,16 @@
+
+service: addons-service
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: dev
+  region: eu-west-2
+
+functions:
+  getPricesForAddons:
+    handler: handler.getPricesForAddons
+    events:
+      - http:
+          path: addons
+          method: get

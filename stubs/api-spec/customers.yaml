@@ -1,0 +1,233 @@
+swagger: "2.0"
+info:
+  title: "Customer Service"
+  description: API for Esure Customer Service
+  version: "1.0"
+  termsOfService: "http://localhost/terms-and-conditions"
+  contact:
+    name: "Retail API Team"
+    url: "http://www.esure.com"
+    email: "api-dev@esure.com"
+  license:
+    name: "Company Licence"
+    url: "http://www.esure.com/licenses/LICENSE-2.0.html"
+# the domain of the service
+host: customerservice-api
+basePath: /v1
+produces:
+  - application/json
+tags:
+- name: Customer API Service
+schemes:
+- http
+- https
+paths:
+
+
+  /customers/{customerId}:
+    get:
+      parameters:
+      - name: customerId
+        in: path
+        description: Customer Master Id from CIH system.
+        required: true
+        type: integer
+        minimum: 1
+        maximum: 10
+      - name: brandCode
+        in: query
+        description: Brand code of the policy
+        type: string
+        enum:
+          - ESB
+          - SWB
+          - FAB
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/CustomerResponse'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/CustomerResponse'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/CustomerResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/CustomerResponse'
+
+definitions:
+
+
+  CustomerResponse:
+    type: object
+    properties:
+      apiVersion:
+        type: string
+        description: "Version of the API"
+      errors:
+        type: array
+        items:
+          $ref: "#/definitions/Message"
+      infos:
+        type: array
+        items:
+          $ref: "#/definitions/Message"
+      results:
+        type: array
+        items:
+          $ref: "#/definitions/CustomerResult"
+
+  CustomerResult:
+    type: "object"
+    properties:
+      title:
+        type: string
+      forename:
+        type: string
+      surname:
+       type: string
+      dateOfBirth:
+       type: string
+       format: date-time
+      sex:
+        type: string
+      complaintMade:
+        type: string
+      barredFlag:
+        type: boolean
+        description: "Is customer barred / do they have any bar types?"
+      firstContactMethod:
+        type: string
+      firstContactMethodDescription:
+        type: string
+      firstContactDate:
+        type: string
+        format: date-time
+      customerAddresses:
+        type: array
+        items:
+          $ref: "#/definitions/CustomerAddress"
+      customerPreferences:
+        type: array
+        items:
+          $ref: "#/definitions/CustomerPreference"
+      customerPolicies:
+        type: "array"
+        items:
+          $ref: "#/definitions/CustomerPolicy"
+      customerBars:
+        type: "array"
+        minItems: 0
+        items:
+          $ref: "#/definitions/CustomerBarItem"
+
+
+  CustomerAddress:
+    type: "object"
+    properties:
+      addressId:
+        type: "string"
+      addressType:
+        type: "string"
+      houseName:
+        type: string
+      houseNumber:
+        type: string
+      addressLine1:
+       type: string
+      addressLine2:
+        type: string
+      postalTown:
+       type: string
+      street:
+        type: string
+      county:
+        type: string
+      postcode:
+        type: string
+      iSOCountryCode:
+       type: string
+
+
+  CustomerPreference:
+    type: object
+    properties:
+      contactType:
+        type: string
+      contactTypeDescription:
+       type: string
+      EveningTelephoneNumber:
+       type: string
+      contactDetails:
+       type: string
+      effectiveDate:
+       type: string
+       format: date-time
+      preferredContactMethod:
+        type: string
+      marketingPreference:
+        type: string
+
+
+  CustomerPolicy:
+    type: "object"
+    required:
+      - policyNumber
+      - brandCode
+    properties:
+      brandCode:
+        type: "string"
+        description: "Brand code of the policy"
+      policyNumber:
+        type: "integer"
+        minimum: 1
+        maxLength: 10
+      brandName:
+       type: string
+      sourceSystemId:
+       type: string
+      sourceSystemCustId:
+       type: string
+
+
+  CustomerBarItem:
+    type: "object"
+    required:
+      - "barEffectiveDate"
+      - "barType"
+      - "barTypeName"
+    properties:
+      barEffectiveDate:
+        type: "string"
+        format: "date-time"
+        description: "Effective date (no time element) of bar"
+        example: "2017-02-22T00:00:00Z"
+      barType:
+        type: "string"
+        description: "Bar type"
+        example: "ACC"
+        maxLength: 8
+      barTypeName:
+        type: "string"
+        description: "Bar type name"
+        example: "Accounts Bar"
+        maxLength: 40
+
+  Message:
+    type: object
+    properties:
+      code:
+        type: string
+        description: Error code
+      message:
+        type: string
+        description: Error message
+      href:
+        type: string
+        description: Developer info
+

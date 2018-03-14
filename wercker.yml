@@ -1,0 +1,145 @@
+box: node
+build:
+  steps:
+    - script:
+        name: set yarn cache
+        code: yarn config set cache-folder $WERCKER_CACHE_DIR/yarn
+    - script:
+        code: |
+          yarn global add npm-cli-login
+          NPM_REGISTRY=https://aie-npm.eu-gb.mybluemix.net npm-cli-login -s @capgemini-aie
+    - script:
+        cwd: chatbot
+        code: yarn install
+    - script:
+        name: test
+        cwd: chatbot
+        code: yarn test
+    - script:
+        cwd: google-assistant-bridge
+        code: yarn install
+    - script:
+        cwd: alexa-bridge
+        code: yarn install
+    - script:
+        code: yarn install
+        cwd: serverless_apis
+    - script:
+        code: yarn install
+        cwd: login
+  
+  after-steps:
+    - slack-notifier:
+        url: $BUILD_BOT_URL
+        channel: general
+        username: Build Bot
+
+deploy-serverless:
+  steps:
+    - script:
+        name: deploy addons services
+        code: ../node_modules/.bin/sls deploy --stage production --region eu-west-2
+        cwd: serverless_apis/addons_service
+    - script:
+        name: deploy customers services
+        code: ../node_modules/.bin/sls deploy --stage production --region eu-west-2
+        cwd: serverless_apis/customers_service
+    - script:
+        name: deploy policies services
+        code: ../node_modules/.bin/sls deploy --stage production --region eu-west-2
+        cwd: serverless_apis/policies_service
+    - script:
+        name: deploy policy details services
+        code: ../node_modules/.bin/sls deploy --stage production --region eu-west-2
+        cwd: serverless_apis/policyDetails_service
+
+create-email-template:
+  steps:
+    - script:
+      name: create or rewrite email Template
+      code: node createRenewalsTemplates
+      cwd: chatbot/notification-api
+
+deploy-chatbot:
+  steps:
+    - script:
+        name: copy code to volume and remove wercker directories
+        code: |
+          mkdir -p /usr/src/app;
+          cp -r . /usr/src/app;
+          rm -r /pipeline;
+        cwd: chatbot
+    - internal/docker-push:
+        aws-access-key: $AWS_ACCESS_KEY_ID
+        aws-secret-key: $AWS_SECRET_ACCESS_KEY
+        aws-region: eu-west-2
+        aws-registry-id: $AWS_REGISTRY_ID
+        repository: esure-chatbot
+        working-dir: /usr/src/app
+        ports: 3978
+        cmd: node index.js
+
+deploy-assistant:
+  steps:
+    - script:
+        name: Deploy serverless
+        code: node_modules/.bin/sls deploy
+        cwd: google-assistant-bridge
+    - script:
+        name: copy code to volume and remove wercker directories
+        code: |
+          mkdir -p /usr/src/app;
+          cp -r . /usr/src/app;
+          rm -r /pipeline;
+        cwd: google-assistant-bridge
+    - internal/docker-push:
+        aws-access-key: $AWS_ACCESS_KEY_ID
+        aws-secret-key: $AWS_SECRET_ACCESS_KEY
+        aws-region: eu-west-2
+        aws-registry-id: $AWS_REGISTRY_ID
+        repository: esure-google-assistant-bridge
+        working-dir: /usr/src/app
+        ports: 1234
+        cmd: node index.js
+
+deploy-alexa:
+  steps:
+    - script:
+        name: copy code to volume and remove wercker directories
+        code: |
+          mkdir -p /usr/src/app;
+          cp -r . /usr/src/app;
+          rm -r /pipeline;
+        cwd: alexa-bridge
+    - internal/docker-push:
+        aws-access-key: $AWS_ACCESS_KEY_ID
+        aws-secret-key: $AWS_SECRET_ACCESS_KEY
+        aws-region: eu-west-2
+        aws-registry-id: $AWS_REGISTRY_ID
+        repository: esure-alexa-bridge
+        working-dir: /usr/src/app
+        ports: 8080
+        cmd: node server.js
+
+deploy-login-app:
+  steps:
+    - script:
+        name: publish app
+        code: node_modules/.bin/awsmobile publish
+        cwd: login
+
+deploy-to-eb:
+  box: coxauto/aws-ebcli
+  steps:
+    - script:
+        name: deploy
+        code: |
+          eb use esure-chatbot-dev;
+          eb deploy;
+        cwd: deploy
+  
+  after-steps:
+    - slack-notifier:
+        url: $DEPLOY_BOT_URL
+        channel: general
+        username: Deploy Bot

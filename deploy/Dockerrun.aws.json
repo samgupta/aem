@@ -1,0 +1,41 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "esure-chatbot",
+      "image": "980554282745.dkr.ecr.eu-west-2.amazonaws.com/esure-chatbot",
+      "essential": true,
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 3978
+        }
+      ]
+    },
+    {
+      "name": "google-assistant-bridge",
+      "image": "980554282745.dkr.ecr.eu-west-2.amazonaws.com/esure-google-assistant-bridge",
+      "essential": true,
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": 1234,
+          "containerPort": 1234
+        }
+      ]
+    },
+    {
+      "name": "alexa-bridge",
+      "image": "980554282745.dkr.ecr.eu-west-2.amazonaws.com/esure-alexa-bridge",
+      "essential": true,
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "containerPort": 8080
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+swagger: "2.0"
+info:
+  title: "Customer Policy Document Details Service"
+  description: API for Esure Customer Policy Document Details
+  version: "1.0"
+  termsOfService: "http://localhost/terms-and-conditions"
+  contact:
+    name: "Retail API Team"
+    url: "http://www.esure.com"
+    email: "api-dev@esure.com"
+  license:
+    name: "Company Licence"
+    url: "http://www.esure.com/licenses/LICENSE-2.0.html"
+# the domain of the service
+host: customerpolicydocumentdetailsservice-api
+basePath: /v1
+produces:
+  - application/json
+tags:
+- name: Customer Policy Document Details Service
+schemes:
+- http
+- https
+paths:
+  /policyDocumentDetails/{policyId}:
+    get:
+      tags:
+        - API Customer Policy Document Details Service Get
+      summary: Get policy document details for a customer
+      description: |
+        Get policy document details for a customer
+      operationId: getPolicyDocumentDetails
+      parameters:
+      - name: policyId
+        in: path
+        description: Policy Id.
+        required: true
+        type: integer
+        format: int64
+      responses:
+        200:
+          description: Working
+          schema:
+            $ref: '#/definitions/PolicyDocumentDetailsServiceResponse'
+        400:
+          description: Invalid Policy Number supplied
+        404:
+          description: Policy document details not found
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/PolicyDocumentDetailsServiceError'
+
+
+definitions:
+
+
+  PolicyIdentifier:
+      type: object
+      properties:
+        policyId:
+          type: object
+          required:
+          - sourceSystem
+          - policyNumber
+          description: "Identifier of policy to be opted-in"
+          properties:
+            sourceSystem:
+              type: string
+              description: "Source system (initially only 'TIA' allowed)"
+              example: "TIA"
+              enum:
+              - "TIA"
+            policyNumber:
+              type: integer
+              format: int64
+              description: "Policy number of policy to be-opted-in"
+              minimum: 1
+              maxLength: 10
+              example: 4700654
+
+
+  PolicyDocumentDetailsServiceResponse:
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          description: "Version of the API"
+        status:
+          type: string
+          description: "Status of Response"
+        result:
+          type: object
+          items:
+            $ref: "#/definitions/PolicyDocumentDetailsResponse"
+          description: "Policy Document Details Response"
+        echo_input:
+          type: string
+          description: "Echo of input."
+        counter:
+          format: int32
+          description: "Call count."
+
+
+
+
+  PolicyDocumentDetailsResponse:
+      type: object
+      properties:
+        sourceSystem:
+          type: string
+          description: "Source system (initially only 'TIA' allowed)"
+          example: "TIA"
+          enum:
+            - "TIA"
+        policyNumber:
+          type: integer
+          format: int64
+          description: "Policy number of policy to be-opted-in"
+          minimum: 1
+          maxLength: 10
+          example: 4700654
+        policyDocumentDetails:
+          type: array
+          items:
+            $ref: "#/definitions/PolicyDocumentDetails"
+
+
+
+
+  PolicyDocumentDetails:
+        type: object
+        properties:
+          policyNumber:
+            type: string
+          documentTitle:
+            type: string
+          documentCreationDate:
+            type: string
+          documentId:
+            type: string
+
+
+
+
+  PolicyDocumentDetailsServiceError:
+    type: object
+    properties:
+      status:
+        description: The error status message
+        type: string
+
+
+

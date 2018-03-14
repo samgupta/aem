@@ -1,0 +1,212 @@
+swagger: "2.0"
+info:
+  title: "Customer Motor Policy Details Service"
+  description: API for Esure Customer Motor Policy Details service
+  version: "1.0"
+  termsOfService: "http://localhost/terms-and-conditions"
+  contact:
+    name: "Retail API Team"
+    url: "http://www.esure.com"
+    email: "api-dev@esure.com"
+  license:
+    name: "Company Licence"
+    url: "http://www.esure.com/licenses/LICENSE-2.0.html"
+# the domain of the service
+host: customermotorpolicydetailsservice-api
+basePath: /v1
+produces:
+  - application/json
+tags:
+- name: Customer Motor Policy Details Service
+schemes:
+- http
+- https
+paths:
+  /motorPolicyDetails/{motorPolicyId}:
+    get:
+      tags:
+        - API Customer Motor Policy Details Service Get
+      summary: Get motor policy details for a customer
+      description: |
+        Get motor policy details for a customer
+      operationId: getMotorPolicyDetails
+      parameters:
+      - name: motorPolicyId
+        in: path
+        description: Motor Policy Id.
+        required: true
+        type: integer
+        format: int64
+      responses:
+        200:
+          description: Working
+          schema:
+            $ref: '#/definitions/MotorPolicyDetailsServiceResponse'
+        400:
+          description: Invalid Motor Policy Number supplied
+        404:
+          description: Motor Policy not found
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/MotorPolicyDetailsServiceError'
+
+
+definitions:
+
+
+  PolicyIdentifier:
+      type: object
+      properties:
+        policyId:
+          type: object
+          required:
+          - sourceSystem
+          - policyNumber
+          description: "Identifier of policy to be opted-in"
+          properties:
+            sourceSystem:
+              type: string
+              description: "Source system (initially only 'TIA' allowed)"
+              example: "TIA"
+              enum:
+              - "TIA"
+            policyNumber:
+              type: integer
+              format: int64
+              description: "Policy number of policy to be-opted-in"
+              minimum: 1
+              maxLength: 10
+              example: 4700654
+
+
+  MotorPolicyDetailsServiceResponse:
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          description: "Version of the API"
+        status:
+          type: string
+          description: "Status of Response"
+        result:
+          type: object
+          items:
+            $ref: "#/definitions/MotorPolicyResponse"
+          description: "Motor Policy Response"
+        echo_input:
+          type: string
+          description: "Echo of input."
+        counter:
+          format: int32
+          description: "Call count."
+
+
+
+
+  MotorPolicyResponse:
+      type: object
+      properties:
+        sourceSystem:
+          type: string
+          description: "Source system (initially only 'TIA' allowed)"
+          example: "TIA"
+          enum:
+            - "TIA"
+        policyNumber:
+          type: integer
+          format: int64
+          description: "Policy number of policy to be-opted-in"
+          minimum: 1
+          maxLength: 10
+          example: 4700654
+        policyMotorVersions:
+          type: array
+          items:
+            $ref: "#/definitions/MotorPolicyDetails"
+
+
+
+
+  MotorPolicyDetails:
+        type: object
+        properties:
+          coverType:
+            type: string
+            example: "COMP"
+          vehicleMake:
+            type: string
+            example: "Mercedes"
+          vehicleModel:
+            type: string
+            example: "SLK250"
+          registrationNumber:
+            type: string
+            example: "TH17 ESS"
+          coverStartDate:
+            type: string
+            format: "date"
+            description: "Cover start date (no time element) for most recent cover."
+            example: "2014-09-22T00:00:00Z"
+          expiryDate:
+            type: string
+            format: "date"
+            description: "Cover start date (no time element) for most recent cover."
+            example: "2014-09-22T00:00:00Z"
+          mainDriver:
+            type: string
+            description: "Name of main driver on policy"
+          namedDriverOne:
+            type: string
+            description: "Name of named driver one"
+          namedDriverTwo:
+            type: string
+            description: "Name of named driver two"
+          noClaimsDiscount:
+            type: integer
+            description: "Value for no claims discount"
+          classOfUse:
+            type: string
+            description: "The class of use for the policy"
+          estimatedMileage:
+            type: integer
+            description: "The estimated mileage of the policy holder"
+          europeanTravelCover:
+            type: boolean
+            description: "Flag to denote if European travel cover is on the policy"
+          additionalCover:
+            type: boolean
+            description: "Flag to denote if additional cover is on the policy"
+          voluntaryExcess:
+            type: integer
+            description: "The monetary value of the voluntary excess"
+          compulsoryExcess:
+            type: integer
+            description: "The monetary value of the compulsory excess"
+          fireExcess:
+            type: integer
+            description: "The monetary value of the fire excess"
+          theftExcess:
+            type: integer
+            description: "The monetary value of the theft excess"
+          windsecreenExcess:
+            type: integer
+            description: "The monetary value of the windscreen excess"
+          initialDeposit:
+            type: integer
+            description: "The monetary value of the initial deposit"
+          monthlyPayment:
+            type: integer
+            description: "The monetary value of the monthly payment"
+          totalCostOfInsurance:
+            type: integer
+            description: "The monetary value of the total cost of insurance"
+
+
+  MotorPolicyDetailsServiceError:
+    type: object
+    properties:
+      status:
+        description: The error status message
+        type: string
+

@@ -1,0 +1,21 @@
+{
+  "name": "google-assistant-bridge",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.186.0",
+    "bot-framework-actions-on-google": "^2.1.3",
+    "dotenv": "^4.0.0",
+    "express": "^4.16.2",
+    "node-fetch": "^1.7.3",
+    "url-search-params": "^0.10.0"
+  },
+  "scripts": {
+    "start": "node --inspect=0.0.0.0:9222 index"
+  },
+  "devDependencies": {
+    "serverless": "^1.25.0",
+    "serverless-offline": "^3.16.0"
+  }
+}

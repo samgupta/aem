@@ -1,0 +1,20 @@
+service: auth-proxy
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: dev
+  region: eu-west-2
+
+plugins:
+  - serverless-offline
+
+functions:
+  token:
+    handler: auth-proxy/handler.token
+    events:
+      - http:
+          path: auth/token
+          method: post
+    environment:
+      TOKEN_ENDPOINT: https://esure-login.auth.eu-west-2.amazoncognito.com/oauth2/token

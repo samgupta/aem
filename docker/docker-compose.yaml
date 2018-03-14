@@ -1,0 +1,53 @@
+version: '3'
+services:
+  dynamodb:
+    image: deangiberson/aws-dynamodb-local
+    container_name: dynamodb
+    ports:
+      - "8000:8000"
+    volumes:
+      - dynamodb:/var/dynamodb_local
+    networks:
+      - chatbot
+  chatbot:
+    image: node:8
+    user: "node"
+    container_name: chatbot
+    ports:
+      - "3978:3978"
+    volumes:
+      - ./../chatbot/:/usr/src/app
+    working_dir: /usr/src/app
+    command: "npm start"
+    environment:
+      - AWS_DYNAMODB_ENDPOINT=http://dynamodb:8000
+    networks:
+      - chatbot
+  assistant_bridge:
+    image: node:8
+    user: "node"
+    container_name: assistant_bridge
+    ports:
+      - "1234:1234"
+    volumes:
+      - ./../google-assistant-bridge/:/usr/src/app
+    network_mode: bridge
+    working_dir: /usr/src/app
+    command: "npm start"
+  alexa_bridge:
+    image: node:8
+    user: "node"
+    container_name: alexa_bridge
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./../alexa-bridge/:/usr/src/app
+    network_mode: bridge
+    working_dir: /usr/src/app
+    command: "npm start"
+
+volumes:
+  dynamodb:
+
+networks:
+  chatbot:

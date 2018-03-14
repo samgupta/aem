@@ -1,0 +1,81 @@
+service: policy-details
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: dev
+  region: eu-west-2
+  environment:
+    POLICYDETAILS_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.POLICYDETAILS_TABLE}"
+      
+plugins:
+  - serverless-offline
+  
+functions:
+  createPolicyDetails:
+    handler: policyDetails/create.create
+    events:
+      - http:
+          path: policy-details
+          method: post
+          cors: true
+  listPolicyDetails:
+    handler: policyDetails/list.list
+    events:
+      - http:
+          path: policy-details
+          method: get
+          cors: true
+
+  getPolicyDetails:
+    handler: policyDetails/get.get
+    events:
+      - http:
+          path: policy-details/{policyNumber}
+          method: get
+          cors: true
+
+  updatePolicyDetails:
+    handler: policyDetails/update.update
+    events:
+      - http:
+          path: policy-details/{policyNumber}
+          method: put
+          cors: true
+
+  deletePolicyDetails:
+    handler: policyDetails/delete.delete
+    events:
+      - http:
+          path: policy-details/{policyNumber}
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    TodosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: policyNumber
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: policyNumber
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.POLICYDETAILS_TABLE}
